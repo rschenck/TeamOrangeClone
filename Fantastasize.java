@@ -7,6 +7,7 @@ import java.io.FileWriter;
 
 class Cell{
     static int[] maxmin={10,40};//high and low of cell cycle values
+    static int deathRate = 1000;
     static Random generator = new Random(); //random number generator
     static int neoMutRate = 100;//mut 1/1000
     static int mutRate = 1000;
@@ -95,13 +96,12 @@ public class Fantastasize
 	public static int numNA = 100;
 	public static int[] totNAL = new int[numNA];
 	public static int[] TCR = new int[numNA];
-	public static int tRate = 1;
+	public static int TKillRate = 1;
+	int tmax=10*24+1;
 
 	public static void main (String[] args)
 	{
-		int tmax=10*24+1;
-
-        //set initial condition for TCR
+		//set initial condition for TCR
         for (int i=0;i<numNA;i++){
             TCR[i]=1;
         }
@@ -119,7 +119,6 @@ public class Fantastasize
 		for (int t=1; t<tmax; t++){//time loop
 			cellListSize=cellList.size();
 			for (int i=0; i<cellListSize; i++){//cell loop
-//			    System.out.println(t);
 				cellList.get(i).advance();
 				if (cellList.get(i).isMature()){
 					cellList.get(i).resetCCCycler(); // Reset Cell Cycle Cycler
