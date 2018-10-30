@@ -11,7 +11,6 @@ class Cell{
     static int neoMutRate = 100;//mut 1/1000
     static int mutRate = 1000;
 
-
     int cellCycleLength;
 	int positionInCellCycle=0;
 	boolean brafRes;
@@ -65,7 +64,7 @@ class Cell{
 			this.neoAntigenLoad[newNA]+=1;
 			Fantastasize.totNAL[newNA]+=1;
 			Fantastasize.TCR[newNA]+=1;
-			System.out.println("hi");
+//			System.out.println("hi");
 		}
 		if(generator.nextInt(mutRate)==0){
 		    int whichMut = generator.nextInt(3);
@@ -82,7 +81,6 @@ class Cell{
 
 		}
 	}
-
 };
 
 public class Fantastasize
@@ -114,7 +112,7 @@ public class Fantastasize
 		for (int t=1; t<tmax; t++){//time loop
 			cellListSize=cellList.size();
 			for (int i=0; i<cellListSize; i++){//cell loop
-			    System.out.println(t);
+//			    System.out.println(t);
 				cellList.get(i).advance();
 				if (cellList.get(i).isMature()){
 					cellList.get(i).reset();
@@ -122,7 +120,7 @@ public class Fantastasize
 					cellList.add(newC);
 				}
 			}
-            if (t%24==0){//print population every day
+            if (t%1==0){//print population every day
             	int sumNA = findTotalArray(totNAL);
             	int sumTNAL = findTotalArray(TCR);
                System.out.println(t+","+cellList.size()+","+sumNA+","+sumTNAL);
