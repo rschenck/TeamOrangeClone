@@ -1,23 +1,23 @@
 import java.util.Random;
 
 class Cell{
-    static int[] maxmin={10,10};//high and low of cell cycle values
-
     int cellCycleLength;
     int positionInCellCycle;
     boolean brafRes;
     boolean PDL1;
     boolean pR;
     public Neoantigens neoAntigenLoad;
+    boolean Alive;
 
 
-    public Cell(Neoantigens neos){//constructor
+    public Cell(Neoantigens neos, int ccLength){//constructor
         this.positionInCellCycle=0;
-        this.cellCycleLength=getCellCycleLength();
+        this.cellCycleLength=ccLength;
         this.neoAntigenLoad=this.inheritNeos(neos);
         this.brafRes = getBRAFresStat();
         this.PDL1 = getPDL1Stat();
         this.pR = getpR();
+        this.Alive = true;
     }
 
     public void setInititialCondition(){
@@ -25,7 +25,6 @@ class Cell{
         this.brafRes=false;
         this.pR=false;
 //        this.neoAntigenLoad[Cell.generator.nextInt(Fantastasize.numNA)]=1;
-        this.cellCycleLength=maxmin[1];
     }
 
     public Neoantigens inheritNeos(Neoantigens neos){

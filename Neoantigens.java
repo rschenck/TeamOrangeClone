@@ -16,7 +16,7 @@ public class Neoantigens {
     }
 
     public int[] immunogenicNeos(){
-        int[] immuno = new int[100];
+        int[] immuno = new int[Fantastasize.totalImmuno];
         for (int i = 0; i < Fantastasize.totalImmuno; i++) {
             if ( get(neoAntigenLoad[i]) == 1 ) {
                 immuno[i] = 1;

@@ -11,14 +11,16 @@ import java.io.FileWriter;
 
 public class Fantastasize
 {
-    public static int burstsize = 5;
-	public static int totalNA = 100;
+    public static int burstsize = 10;
+	public static int totalNA = 1000;
 	public static int totalImmuno = 10;
-	public static int TCRdelay = 2;
+	public static int TCRdelay = 4;
 	public static int[] immunoTracker = new int[totalImmuno+totalImmuno*TCRdelay]; // Immunogenic clone population tracker
     public static int[] immunoCurrent = new int[totalImmuno]; // Current timestep sum of immunogenic cells
 	public static int[] TCRpop = new int[totalImmuno];
 	public static int TKillRate = 1;
+    static int[] ccmaxmin={10,40};//high and low of cell cycle values
+
     int tmax=10*24+1;
 
     static Random generator = new Random(); //random number generator
@@ -32,15 +34,17 @@ public class Fantastasize
         }
 
 		ArrayList<Cell> cellList = new ArrayList<Cell>();
+        ArrayList<Cell> AliveList = new ArrayList<Cell>();
 
-		// Cell Initilization
+
+        // Cell Initilization
         Neoantigens firstneos = new Neoantigens();
         burstInitializer(firstneos);
-        cellList.add(new Cell(firstneos));
+        cellList.add(new Cell(firstneos,ccmaxmin[1]));
 		Cell initialCell = cellList.get(0);
 		initialCell.setInititialCondition();
 
-        int tmax=10*24+1; // Run Time
+        int tmax=365*24+1; // Run Time
         for (int t=1; t< tmax; t++){//time loop
 
 			int cellListSize=cellList.size();
@@ -50,11 +54,13 @@ public class Fantastasize
 
 				// Births
 				if (cell.isMature()){
-					cell.resetCCCycler(); // Reset Cell Cycle Cycler
                     cell.proteomemutate(); // Acquire neoantigens
                     cell.phenomute(); // Mutate phenotype
-					Cell newC = new Cell(cell.neoAntigenLoad);
+					Cell newC = new Cell(cell.neoAntigenLoad,cell.cellCycleLength);
 					cellList.add(newC);
+                    cell.resetCCCycler(); // Reset Cell Cycle Cycler
+//                    System.out.println(cell.cellCycleLength+" "+newC.cellCycleLength);
+
 				}
 
 				// Immunogenic Clone Track This Timestep:
@@ -70,7 +76,8 @@ public class Fantastasize
             int totalSize = 0;
             for (int i = 0; i < TCRpop.length; i++) {
                 if(TCRpop[i]>1){
-                    TCRpop[i] += Math.pow(immunoTracker[i],1.2) - TCRpop[i]*0.85;
+                    TCRpop[i] = (int) Math.round(TCRpop[i]*0.85);
+                    TCRpop[i] += Math.pow(immunoTracker[i],1.2);
                 } else{
                     TCRpop[i] += Math.pow(immunoTracker[i],1.2);
                 }
@@ -100,26 +107,43 @@ public class Fantastasize
 
                     double DeathProb = 0.;
                     for (int j = 0; j < immunoPresence.size(); j++) {
-                        double numerator =  TCRpop[immunoPresence.get(j)] + immunoCurrent[immunoPresence.get(j)];
+                        double numerator =  TCRpop[immunoPresence.get(j)] * immunoCurrent[immunoPresence.get(j)];
                         double denominator = totalSize;
-                        DeathProb += 1.0*numerator/denominator;
+                        DeathProb += 0.4*numerator/denominator;
                     }
 //                    System.out.println(DeathProb);
 
                     cellList.size();
-                    if( DeathProb > generator.nextDouble() ) {
+                    if( DeathProb > generator.nextDouble()) {
 
-                        cellList.remove(i);
+                        cell.Alive=false;
 
-                        int toKill = generator.nextInt(immunoPresence.size());
-                        if(TCRpop[immunoPresence.get(toKill)]>1){
-                            TCRpop[immunoPresence.get(toKill)]-=1;
+                        if(generator.nextInt(5)==0){
+                            int toKill = generator.nextInt(immunoPresence.size());
+                              if(TCRpop[immunoPresence.get(toKill)]>1){
+                                TCRpop[immunoPresence.get(toKill)]-=1;
+                            }
                         }
+//                        int toKill = generator.nextInt(immunoPresence.size());
+//                        if(TCRpop[immunoPresence.get(toKill)]>1){
+//                            TCRpop[immunoPresence.get(toKill)]-=1;
+//                        }
                     }
 
                 }
 
             }
+
+            //TODO update list with alive cells
+            for (int j = 0; j < cellList.size(); j++) {
+                if(cellList.get(j).Alive){
+                    AliveList.add(cellList.get(j));
+                }
+            }
+            cellList=new ArrayList<Cell>();
+            cellList=AliveList;
+            AliveList=new ArrayList<Cell>();
+
             System.out.println(t + "\t" + Arrays.toString(TCRpop) + "\t" + Arrays.toString(immunoCurrent) + "\t" + cellListSize );
 
             ResetCurrentStepImmunoTracker();
@@ -170,8 +194,6 @@ public class Fantastasize
 
         // Step 2: Add the Current timestep to the array in the first immunoClone slots
         for (int i = 0; i < totalImmuno; i++) {
-//            System.out.println(i);
-//            System.out.println(i+totalImmuno*TCRdelay);
             updateTracker[i+totalImmuno*TCRdelay] = immunoCurrent[i];
         }
         immunoTracker = updateTracker;
