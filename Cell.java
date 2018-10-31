@@ -7,7 +7,7 @@ class Cell{
     boolean PDL1;
     boolean pR;
 //    public Neoantigens neoAntigenLoad;
-    int[] neoAntigenLoad = new int[Fantastasize.totalNA];
+    int[] neoAntigenLoad = new int[Fantastasize.totalImmuno];
     boolean Alive;
 
 
@@ -29,7 +29,7 @@ class Cell{
     }
 
     public void inheritNeos(int[] neos){
-        for (int i = 0; i < Fantastasize.totalNA; i++) {
+        for (int i = 0; i < Fantastasize.totalImmuno; i++) {
             if( neos[i]==1){
                 neoAntigenLoad[i]=neos[i];
             }
@@ -76,9 +76,14 @@ class Cell{
     public void proteomemutate(){
         if(Fantastasize.generator.nextInt(Fantastasize.neoMutRate)==0){//random roll - neoAntigen accumulation
             int NAidx = Fantastasize.generator.nextInt(Fantastasize.totalNA);
-            this.neoAntigenLoad[NAidx]=1;
 
-            this.cellCycleLength=Fantastasize.generator.nextInt(Fantastasize.ccmaxmin[1]-Fantastasize.ccmaxmin[0]) + Fantastasize.ccmaxmin[1];
+            if (NAidx < Fantastasize.totalImmuno){
+                this.neoAntigenLoad[NAidx]=1;
+                this.cellCycleLength=Fantastasize.generator.nextInt(Fantastasize.ccmaxmin[1]-Fantastasize.ccmaxmin[0]) + Fantastasize.ccmaxmin[1];
+            } else {
+                this.cellCycleLength=Fantastasize.generator.nextInt(Fantastasize.ccmaxmin[1]-Fantastasize.ccmaxmin[0]) + Fantastasize.ccmaxmin[1];
+            }
+//            this.neoAntigenLoad[NAidx]=1;
         }
     }
 
