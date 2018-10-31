@@ -31,6 +31,7 @@ def Plot(time, tcrPops, immunogenicPops, totalPop):
     immunogenicPops = np.asarray(immunogenicPops)
     ax2.plot(time, tcrPops, linestyle="dashed")
     ax2.plot(time, immunogenicPops)
+    ax2.set_xlim(left=450)
     plt.show()
 
 

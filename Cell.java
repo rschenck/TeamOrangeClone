@@ -6,14 +6,15 @@ class Cell{
     boolean brafRes;
     boolean PDL1;
     boolean pR;
-    public Neoantigens neoAntigenLoad;
+//    public Neoantigens neoAntigenLoad;
+    int[] neoAntigenLoad = new int[Fantastasize.totalNA];
     boolean Alive;
 
 
-    public Cell(Neoantigens neos, int ccLength){//constructor
+    public Cell(int[] neos, int ccLength){//constructor
         this.positionInCellCycle=0;
         this.cellCycleLength=ccLength;
-        this.neoAntigenLoad=this.inheritNeos(neos);
+        this.inheritNeos(neos);
         this.brafRes = getBRAFresStat();
         this.PDL1 = getPDL1Stat();
         this.pR = getpR();
@@ -27,14 +28,12 @@ class Cell{
 //        this.neoAntigenLoad[Cell.generator.nextInt(Fantastasize.numNA)]=1;
     }
 
-    public Neoantigens inheritNeos(Neoantigens neos){
-        Neoantigens newNeos = new Neoantigens();
-        for (int i = 0; i < neos.getNeoLoadLength(); i++) {
-            if( neos.get(i)==1){
-                newNeos.set(i);
+    public void inheritNeos(int[] neos){
+        for (int i = 0; i < Fantastasize.totalNA; i++) {
+            if( neos[i]==1){
+                neoAntigenLoad[i]=neos[i];
             }
         }
-        return(newNeos);
     }
 
     public void advance() {
@@ -62,12 +61,22 @@ class Cell{
         this.positionInCellCycle=0;
     }
 
+    public int[] immunogenicNeos(){
+        int[] immuno = new int[Fantastasize.totalImmuno];
+        for (int i = 0; i < Fantastasize.totalImmuno; i++) {
+            if ( neoAntigenLoad[i] == 1 ) {
+                immuno[i] = 1;
+            } else {
+                immuno[i] = 0;
+            }
+        }
+        return(immuno);
+    }
+
     public void proteomemutate(){
         if(Fantastasize.generator.nextInt(Fantastasize.neoMutRate)==0){//random roll - neoAntigen accumulation
             int NAidx = Fantastasize.generator.nextInt(Fantastasize.totalNA);
-            this.neoAntigenLoad.set(NAidx);
-//            Fantastasize.totNAL[newNA]+=1;
-//            Fantastasize.TCRpop[newNA]+=1;
+            this.neoAntigenLoad[NAidx]=1;
         }
     }
 

@@ -19,6 +19,7 @@ public class Fantastasize
     public static int[] immunoCurrent = new int[totalImmuno]; // Current timestep sum of immunogenic cells
 	public static int[] TCRpop = new int[totalImmuno];
 	public static int TKillRate = 1;
+
     static int[] ccmaxmin={10,40};//high and low of cell cycle values
 
     int tmax=10*24+1;
@@ -40,7 +41,7 @@ public class Fantastasize
         // Cell Initilization
         Neoantigens firstneos = new Neoantigens();
         burstInitializer(firstneos);
-        cellList.add(new Cell(firstneos,ccmaxmin[1]));
+        cellList.add(new Cell(new int[Fantastasize.totalNA],ccmaxmin[1]));
 		Cell initialCell = cellList.get(0);
 		initialCell.setInititialCondition();
 
@@ -64,7 +65,7 @@ public class Fantastasize
 				}
 
 				// Immunogenic Clone Track This Timestep:
-                int[] immunogenicity = cell.neoAntigenLoad.immunogenicNeos();
+                int[] immunogenicity = cell.immunogenicNeos();
                 for (int j = 0; j < totalImmuno; j++) {
                     immunoCurrent[j]+=immunogenicity[j];
                 }
@@ -77,26 +78,19 @@ public class Fantastasize
             for (int i = 0; i < TCRpop.length; i++) {
                 if(TCRpop[i]>1){
                     TCRpop[i] = (int) Math.round(TCRpop[i]*0.85);
-                    TCRpop[i] += Math.pow(immunoTracker[i],1.2);
+                    TCRpop[i] += Math.pow(immunoTracker[i],1.1);
                 } else{
-                    TCRpop[i] += Math.pow(immunoTracker[i],1.2);
+                    TCRpop[i] += Math.pow(immunoTracker[i],1.1);
                 }
                 totalSize += immunoCurrent[i] + TCRpop[i];
             }
 
             // Cell Death
-//            double[] deathArray = new double[totalImmuno]; // Update with the probabilities of death
-//            for (int i = 0; i < totalImmuno; i++) {
-//
-//                deathArray[i] = totalImmuno
-//            }
-            // P(Death) =
-
             for (int i = 0; i < cellListSize; i++) {
                 Cell cell = cellList.get(i);
 
                 ArrayList<Integer> immunoPresence = new ArrayList<>();
-                int[] cellImp = cell.neoAntigenLoad.immunogenicNeos();
+                int[] cellImp = cell.immunogenicNeos();
                 for (int j = 0; j < totalImmuno; j++) {
                     if (cellImp[j] == 1) {
                         immunoPresence.add(j); // Collects immunogenic epitopes
@@ -143,33 +137,10 @@ public class Fantastasize
             cellList=new ArrayList<Cell>();
             cellList=AliveList;
             AliveList=new ArrayList<Cell>();
-
+            System.gc();
             System.out.println(t + "\t" + Arrays.toString(TCRpop) + "\t" + Arrays.toString(immunoCurrent) + "\t" + cellListSize );
 
             ResetCurrentStepImmunoTracker();
-
-
-//            if (t%1==0){//print population every day
-//            	int sumNA = findTotalArray(totNAL);
-//            	int sumTNAL = findTotalArray(TCRpop);
-//               System.out.println(t+","+cellList.size()+","+sumNA+","+sumTNAL);
-//
-//                //write TCR to file
-//                String str="";//create an empty string
-//                for(int i=0; i<TCRpop.length; i++){
-//                    str += " "+TCRpop[i];//record all of TCR to file
-//                }
-//                str += "\n";//creates a new line;
-//                write("TCR.txt",str); //write string to file
-//
-//                //write NAL to file
-//                str="";//create an empty string
-//                for(int i=0; i<totNAL.length; i++){
-//                    str += " "+totNAL[i];//record all of TCR to file
-//                }
-//                str += "\n";//creates a new line;
-//                write("totNAL.txt",str); //write string to file
-//            }
 
 		}
 	}

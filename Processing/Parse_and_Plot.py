@@ -23,7 +23,18 @@ def PullAndParseSource():
 
 def Plot(time, tcrPops, immunogenicPops, totalPop):
     fig, ax = plt.subplots()
-    ax.plot(time, totalPop)
+    immunogenicPops = np.asarray(immunogenicPops)
+    immunogenicSum=np.sum(immunogenicPops, axis=1)
+    antigenic = np.asarray(totalPop)-immunogenicSum
+
+    ax.plot(time, immunogenicSum)
+    ax.plot(time, antigenic)
+    plt.semilogy()
+    ax.set_xlim(left=0, right=max(time))
+    plt.xlabel("Time (hrs.)")
+    plt.ylabel("Population Size (log)")
+    plt.title("Population Dynamics")
+    ax.legend(['Immunogenic-Population','Non-immunogenic population'])
     plt.show()
 
     fig2, ax2 = plt.subplots()
@@ -31,11 +42,18 @@ def Plot(time, tcrPops, immunogenicPops, totalPop):
     immunogenicPops = np.asarray(immunogenicPops)
     ax2.plot(time, tcrPops, linestyle="dashed")
     ax2.plot(time, immunogenicPops)
+    ax2.set_xlim(left=450, right=max(time))
+    plt.xlabel("Time (hrs.)")
+    plt.ylabel("Population Size")
+    plt.title("Immunogenicity Dynamics")
     plt.show()
 
 
 def main():
     time, tcrPops, immunogenicPops, totalPop = PullAndParseSource()
+
+    for i,item in enumerate(tcrPops):
+        print("%s\t%s"%(time[i],'\t'.join([str(val) for val in item])))
 
     Plot(time, tcrPops, immunogenicPops, totalPop)
 
