@@ -77,6 +77,8 @@ class Cell{
         if(Fantastasize.generator.nextInt(Fantastasize.neoMutRate)==0){//random roll - neoAntigen accumulation
             int NAidx = Fantastasize.generator.nextInt(Fantastasize.totalNA);
             this.neoAntigenLoad[NAidx]=1;
+
+            this.cellCycleLength=Fantastasize.generator.nextInt(Fantastasize.ccmaxmin[1]-Fantastasize.ccmaxmin[0]) + Fantastasize.ccmaxmin[1];
         }
     }
 
