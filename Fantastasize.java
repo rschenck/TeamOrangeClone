@@ -11,13 +11,14 @@ import java.io.FileWriter;
 
 public class Fantastasize
 {
-    public static int burstsize = 10;
+    public static int burstsize = 50;
 	public static int totalNA = 1000;
-	public static int totalImmuno = 10;
-	public static int TCRdelay = 4;
+	public static int totalImmuno = 100;
+	public static int TCRdelay = 4*24;
 	public static int[] immunoTracker = new int[totalImmuno+totalImmuno*TCRdelay]; // Immunogenic clone population tracker
     public static int[] immunoCurrent = new int[totalImmuno]; // Current timestep sum of immunogenic cells
 	public static int[] TCRpop = new int[totalImmuno];
+
 	public static int[] TCRinactive = new int[totalImmuno];
 	public static double inactivateRatePDL1 = 20;
 	public static int totalPDL1;
@@ -25,6 +26,7 @@ public class Fantastasize
 	public static int mutRate = 400;
 	public static boolean immunoTxOn = false;
 	public static int immunoTxTime = 20*24;
+
 
     static int[] ccmaxmin={10,40};//high and low of cell cycle values
 

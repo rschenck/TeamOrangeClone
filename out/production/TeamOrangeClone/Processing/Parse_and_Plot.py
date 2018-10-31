@@ -52,6 +52,7 @@ def Plot(time, tcrPops, immunogenicPops, totalPop):
 def main():
     time, tcrPops, immunogenicPops, totalPop = PullAndParseSource()
 
+    print("Time\t%s"%('\t'.join(["TCR%s"%(val) for val in range(1,101)])))
     for i,item in enumerate(tcrPops):
         print("%s\t%s"%(time[i],'\t'.join([str(val) for val in item])))
 
