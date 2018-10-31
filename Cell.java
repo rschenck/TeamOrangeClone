@@ -1,8 +1,7 @@
 import java.util.Random;
 
 class Cell{
-    static int[] maxmin={10,40};//high and low of cell cycle values
-    static int deathRate = 1000;
+    static int[] maxmin={10,10};//high and low of cell cycle values
 
     int cellCycleLength;
     int positionInCellCycle;
@@ -74,19 +73,19 @@ class Cell{
     }
 
     public void phenomute(){
-        if(Fantastasize.generator.nextInt(Fantastasize.mutRate)==0){//mutation rate
-            int whichMut = Fantastasize.generator.nextInt(3);
-            if(whichMut==0){
-                this.cellCycleLength=maxmin[0];
-                this.pR = true;
-            }
-            else if(whichMut==1){
-                this.brafRes=getBRAFresStat();
-            }
-            else{
-                this.PDL1=getPDL1Stat();
-            }
-
-        }
+//        if(Fantastasize.generator.nextInt(Fantastasize.mutRate)==0){//mutation rate
+//            int whichMut = Fantastasize.generator.nextInt(3);
+//            if(whichMut==0){
+//                this.cellCycleLength=maxmin[0];
+//                this.pR = true;
+//            }
+//            else if(whichMut==1){
+//                this.brafRes=getBRAFresStat();
+//            }
+//            else{
+//                this.PDL1=getPDL1Stat();
+//            }
+//
+//        }
     }
 };

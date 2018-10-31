@@ -11,10 +11,10 @@ import java.io.FileWriter;
 
 public class Fantastasize
 {
-    public static int burstsize = 3;
-	public static int totalNA = 5;
-	public static int totalImmuno = 2;
-	public static int TCRdelay = 4;
+    public static int burstsize = 5;
+	public static int totalNA = 100;
+	public static int totalImmuno = 10;
+	public static int TCRdelay = 2;
 	public static int[] immunoTracker = new int[totalImmuno+totalImmuno*TCRdelay]; // Immunogenic clone population tracker
     public static int[] immunoCurrent = new int[totalImmuno]; // Current timestep sum of immunogenic cells
 	public static int[] TCRpop = new int[totalImmuno];
@@ -22,8 +22,7 @@ public class Fantastasize
     int tmax=10*24+1;
 
     static Random generator = new Random(); //random number generator
-    static int neoMutRate = 100;//mut 1/1000
-    static int mutRate = 1000;
+    static int neoMutRate = 20;//mut 1/20
 
     public static void main (String[] args)
 	{
@@ -36,14 +35,12 @@ public class Fantastasize
 
 		// Cell Initilization
         Neoantigens firstneos = new Neoantigens();
-        firstneos.printArray();
-
         burstInitializer(firstneos);
         cellList.add(new Cell(firstneos));
 		Cell initialCell = cellList.get(0);
 		initialCell.setInititialCondition();
 
-        int tmax=50; // Run Time
+        int tmax=10*24+1; // Run Time
         for (int t=1; t< tmax; t++){//time loop
 
 			int cellListSize=cellList.size();
@@ -105,7 +102,7 @@ public class Fantastasize
                     for (int j = 0; j < immunoPresence.size(); j++) {
                         double numerator =  TCRpop[immunoPresence.get(j)] + immunoCurrent[immunoPresence.get(j)];
                         double denominator = totalSize;
-                        DeathProb += 0.05*numerator/denominator;
+                        DeathProb += 1.0*numerator/denominator;
                     }
 //                    System.out.println(DeathProb);
 
@@ -123,11 +120,9 @@ public class Fantastasize
                 }
 
             }
+            System.out.println(t + "\t" + Arrays.toString(TCRpop) + "\t" + Arrays.toString(immunoCurrent) + "\t" + cellListSize );
+
             ResetCurrentStepImmunoTracker();
-
-
-            System.out.println(Arrays.toString(TCRpop) + '\t' + Arrays.toString(immunoTracker));
-
 
 
 //            if (t%1==0){//print population every day
@@ -155,16 +150,7 @@ public class Fantastasize
 		}
 	}
 
-	public static int findTotalArray(int[] array){
-		int sum=0;
-		for(int i=0;i<array.length;i++){
-			sum+=array[i];
-		}
-		return sum;
-	}
-
-	public static void write (String filename, String data)
-	{
+	public static void write (String filename, String data) {
 		try{//exception handling, print a message if doesn't succeed
     		FileWriter fw = new FileWriter(filename,true); //the true will append the new data
     		fw.write(data);//appends the string to the file
