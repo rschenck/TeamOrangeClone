@@ -5,7 +5,7 @@ class Cell{
     int positionInCellCycle;
     boolean brafRes;
     boolean PDL1;
-    boolean pR;
+    //boolean pR;
 //    public Neoantigens neoAntigenLoad;
     int[] neoAntigenLoad = new int[Fantastasize.totalImmuno];
     boolean Alive;
@@ -17,14 +17,14 @@ class Cell{
         this.inheritNeos(neos);
         this.brafRes = getBRAFresStat();
         this.PDL1 = getPDL1Stat();
-        this.pR = getpR();
+        //this.pR = getpR();
         this.Alive = true;
     }
 
     public void setInititialCondition(){
         this.PDL1=false;
         this.brafRes=false;
-        this.pR=false;
+        //this.pR=false;
 //        this.neoAntigenLoad[Cell.generator.nextInt(Fantastasize.numNA)]=1;
     }
 
@@ -49,13 +49,13 @@ class Cell{
         return this.cellCycleLength; }
 
     public boolean getBRAFresStat(){
-        return this.brafRes; }
+        return this.brafRes;}
 
     public boolean getPDL1Stat(){
         return this.PDL1; }
 
-    public boolean getpR(){
-        return this.pR; }
+//    public boolean getpR(){
+//        return this.pR; }
 
     public void resetCCCycler(){
         this.positionInCellCycle=0;
@@ -88,19 +88,20 @@ class Cell{
     }
 
     public void phenomute(){
-//        if(Fantastasize.generator.nextInt(Fantastasize.mutRate)==0){//mutation rate
-//            int whichMut = Fantastasize.generator.nextInt(3);
+        if(Fantastasize.generator.nextInt(Fantastasize.mutRate)==0){//mutation rate
+            int whichMut = Fantastasize.generator.nextInt(2);
 //            if(whichMut==0){
-//                this.cellCycleLength=maxmin[0];
+//                this.cellCycleLength=Fantastasize.ccmaxmin[0];
 //                this.pR = true;
 //            }
-//            else if(whichMut==1){
-//                this.brafRes=getBRAFresStat();
-//            }
-//            else{
-//                this.PDL1=getPDL1Stat();
-//            }
-//
-//        }
+            if(whichMut==0){
+                this.brafRes=true;
+                this.cellCycleLength=Fantastasize.ccmaxmin[0];
+            }
+            else{
+                this.PDL1=true;
+            }
+
+        }
     }
-};
+}
