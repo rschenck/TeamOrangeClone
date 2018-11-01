@@ -174,6 +174,9 @@ public class Fantastasize
             AliveList=new ArrayList<Cell>();
             System.gc();
 
+            if(t/24.%30==0){
+                System.out.println(t/24.);
+            }
 //            System.out.println(t + "\t" + Arrays.toString(TCRpop) + "\t" + Arrays.toString(immunoCurrent) + "\t" + cellListSize + "\t" + Arrays.toString(TCRinactive)+ "\t" +totalPDL1);
             String dataOut = t + "\t" + Arrays.toString(TCRpop) + "\t" + Arrays.toString(immunoCurrent) + "\t" + cellListSize + "\t" + Arrays.toString(TCRinactive)+ "\t" +totalPDL1 + '\n';
             write(outFileName, dataOut);
