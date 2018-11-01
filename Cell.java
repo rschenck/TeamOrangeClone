@@ -79,28 +79,32 @@ class Cell{
 
             if (NAidx < Fantastasize.totalImmuno){
                 this.neoAntigenLoad[NAidx]=1;
-                this.cellCycleLength=Fantastasize.generator.nextInt(Fantastasize.ccmaxmin[1]-Fantastasize.ccmaxmin[0]) + Fantastasize.ccmaxmin[1];
+                if(cellCycleLength>10 & Fantastasize.FunctionalHet){
+                    this.cellCycleLength=Fantastasize.generator.nextInt(this.cellCycleLength-Fantastasize.ccmaxmin[0]) + Fantastasize.ccmaxmin[1];
+                }
             } else {
-                this.cellCycleLength=Fantastasize.generator.nextInt(Fantastasize.ccmaxmin[1]-Fantastasize.ccmaxmin[0]) + Fantastasize.ccmaxmin[1];
+                if(cellCycleLength>10 & Fantastasize.FunctionalHet){
+                    this.cellCycleLength=Fantastasize.generator.nextInt(this.cellCycleLength-Fantastasize.ccmaxmin[0]) + Fantastasize.ccmaxmin[1];
+                }
             }
 //            this.neoAntigenLoad[NAidx]=1;
         }
     }
 
     public void phenomute(){
-        if(Fantastasize.generator.nextInt(Fantastasize.mutRate)==0){//mutation rate
-            int whichMut = Fantastasize.generator.nextInt(2);
+        if(Fantastasize.generator.nextInt(Fantastasize.neoMutRate)==0){//mutation rate
+//            int whichMut = Fantastasize.generator.nextInt(2);
 //            if(whichMut==0){
 //                this.cellCycleLength=Fantastasize.ccmaxmin[0];
 //                this.pR = true;
 //            }
-            if(whichMut==0){
-                this.brafRes=true;
-                this.cellCycleLength=Fantastasize.ccmaxmin[0];
-            }
-            else{
+//            if(whichMut==0){
+//                this.brafRes=true;
+//                this.cellCycleLength=Fantastasize.ccmaxmin[0];
+//            }
+//            else{
                 this.PDL1=true;
-            }
+//            }
 
         }
     }
