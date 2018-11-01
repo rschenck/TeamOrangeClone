@@ -24,13 +24,13 @@ public class Fantastasize
     final static boolean jarfile = true;
     public static boolean PDL1on = false;
 	public static boolean TXon = false;
-	public static boolean FunctionalHet = true; // Whether Proliferation Rate
+	public static boolean FunctionalHet = true; // Whether Proliferation Rate varies
 
 
     static int[] ccmaxmin={20,80};//high and low of cell cycle values
 
     static Random generator = new Random(); //random number generator
-    static int neoMutRate = 100;//mut 1/100
+    static int neoMutRate = 1000;//mut 1/100
     final static double carryingCapacity = 2000000.;
     final static int CCmodifier = 4;
 
@@ -173,7 +173,10 @@ public class Fantastasize
             cellList=AliveList;
             AliveList=new ArrayList<Cell>();
             System.gc();
-            System.out.println(t + "\t" + Arrays.toString(TCRpop) + "\t" + Arrays.toString(immunoCurrent) + "\t" + cellListSize + "\t" + Arrays.toString(TCRinactive)+ "\t" +totalPDL1);
+
+//            System.out.println(t + "\t" + Arrays.toString(TCRpop) + "\t" + Arrays.toString(immunoCurrent) + "\t" + cellListSize + "\t" + Arrays.toString(TCRinactive)+ "\t" +totalPDL1);
+            String dataOut = t + "\t" + Arrays.toString(TCRpop) + "\t" + Arrays.toString(immunoCurrent) + "\t" + cellListSize + "\t" + Arrays.toString(TCRinactive)+ "\t" +totalPDL1 + '\n';
+            write(outFileName, dataOut);
 
             ResetCurrentStepImmunoTracker();
 
