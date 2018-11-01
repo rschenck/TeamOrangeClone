@@ -22,11 +22,11 @@ def PullAndParseSource():
     return(time, tcrPops, immunogenicPops, totalPop)
 
 def Plot(time, tcrPops, immunogenicPops, totalPop):
-    fig, ax = plt.subplots()
     immunogenicPops = np.asarray(immunogenicPops)
     immunogenicSum=np.sum(immunogenicPops, axis=1)
     antigenic = np.asarray(totalPop)-immunogenicSum
 
+    fig, ax = plt.subplots()
     ax.plot(time, immunogenicSum)
     ax.plot(time, antigenic)
     plt.semilogy()
