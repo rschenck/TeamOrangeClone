@@ -6,32 +6,35 @@ import java.io.FileWriter;
 
 public class Fantastasize
 {
-    public static int burstsize = 25; // 50
-	public static int totalNA = 700; // 1333
-	public static int totalImmuno = 50; // 100
+    public static int burstsize = 25; // 50, was 25
+	public static int totalNA = 700; // 1333, //jill - was 700
+	public static int totalImmuno = 50; // 50
 	public static int TCRdelay = 4*24;
 	public static int[] immunoTracker = new int[totalImmuno+totalImmuno*TCRdelay]; // Immunogenic clone population tracker
     public static int[] immunoCurrent = new int[totalImmuno]; // Current timestep sum of immunogenic cells
 	public static int[] TCRpop = new int[totalImmuno];
 
 	public static int[] TCRinactive = new int[totalImmuno];
-	public static double TCRinactivationRate = 20;
+	public static double TCRinactivationRate = 10;
+	public static double reactivateFactor = 10;
 	public static int totalPDL1; // How many PDL1 cells there are
 	public static boolean immunoTxOn = false;
 	public static int[] immunoTxStart = {30*24,50*24}; // Strating time(s) of treatment
-    public static int immunoTxDuration = 7*24;
+    public static int immunoTxInterval = 7*24;
+    public static int immunoATx = 4*24;
     public static double TCRDeath =0.85; // Active TCR Death Rate
-    public static double TCRDeathInactive = 0.985; // Inactivated TCR Death Rate
+    public static double TCRDeathInactive = 0.7; // Inactivated TCR Death Rate
 
     final static boolean jarfile = true;
-    public static boolean PDL1on = false;
-	public static boolean TXon = false;
+    public static boolean PDL1on = true;
+	public static boolean TXon = true;
 	public static boolean FunctionalHet = true; // Whether Proliferation Rate varies
 
     static int[] ccmaxmin={20,80};//high and low of cell cycle values
 
     static Random generator = new Random(); //random number generator
     static int neoMutRate = 100;//mut 1/100
+    static int phenoMutRate = 3;
     final static double carryingCapacity = 2000000.;
     final static int CCmodifier = 5;
 
@@ -44,7 +47,7 @@ public class Fantastasize
         }
 
         String outFileName = "test.txt";
-        int tmax=365*24+1; // Run Time
+        int tmax=80*24+1; // Run Time  ------ was 365
         long maxAllowablePop=22000000;
         if(jarfile){
             outFileName = args[0];
@@ -68,7 +71,10 @@ public class Fantastasize
         while (t<tmax & cellListSize<maxAllowablePop){//time loop
             t++;
             if(PDL1on && TXon) {
-                immunoTxOn=(t>=immunoTxStart[1] && (t-immunoTxStart[1])%immunoTxDuration==0)?true:false;
+                immunoTxOn=(t>=immunoTxStart[1] && (t-immunoTxStart[1])% immunoTxInterval ==0)?true:immunoTxOn;
+                if((t-immunoTxStart[1] - immunoATx) % immunoTxInterval ==0){
+                    immunoTxOn=false;
+                }
                 //if(t*24 == immunoTxStart[0] | t*24 == immunoTxStart[1])
                 //immunoTxOn = (t == immunoTxStart) ? true : false;
             }
@@ -112,26 +118,72 @@ public class Fantastasize
             // TCR Delayed Birth Rate
             int totalSize = 0;
             for (int i = 0; i < TCRpop.length; i++) {
+                TCRpop[i] += Math.pow(immunoTracker[i], 1.1);//TCR birth
+
                 if(TCRpop[i]>1){
-                    TCRpop[i] = (int) Math.round(TCRpop[i]*TCRDeath);//TCR death
-                    if(immunoTracker[i]/Double.valueOf(cellListSize) > 0.000001) {
-                        TCRpop[i] += Math.pow(immunoTracker[i], 1.1);//TCR birth
-                        if (PDL1on) {
-                            TCRinactive[i] = (int) Math.round(TCRinactive[i] * TCRDeathInactive);//death of inactive T cells
-                            double inactiveActiveShift;
-                            if (TXon) {
-                                inactiveActiveShift = (immunoTxOn && TCRpop[i] > 0) ? -TCRinactivationRate * (TCRinactive[i]) * totalPDL1 : TCRinactivationRate * (TCRpop[i] - TCRinactive[i]) * totalPDL1;
-                            } else {
-                                TCRinactive[i] = (int) Math.round(TCRinactive[i] * TCRDeathInactive);
-                                inactiveActiveShift = TCRinactivationRate * (TCRpop[i] - TCRinactive[i]) * totalPDL1;
+
+
+                    if (PDL1on) {
+
+                        TCRinactive[i] = (int) Math.round(TCRinactive[i] * TCRDeathInactive);//death of inactive T cells
+
+                        //TODO shift from TCRpop to TCRinactive
+                        int TOTALINACTIVATED=(int) Math.round(TCRinactivationRate*totalPDL1);
+                        TOTALINACTIVATED = (TOTALINACTIVATED>=TCRpop[i]) ? (int) Math.round(TCRpop[i]*.75f)-1 : TOTALINACTIVATED;
+
+                        if(TXon){
+                            if(immunoTxOn){
+                                //TODO shift from TCRpop to TCRinactive
+                                int TOTALREACTIVATED=(int) Math.round(reactivateFactor*TCRinactive[i]);
+                                TOTALREACTIVATED = (TOTALREACTIVATED>=TCRinactive[i]) ? (int) Math.round(TCRinactive[i]) : TOTALREACTIVATED;
+
+                                TCRinactive[i] -= TOTALREACTIVATED;
+                                TCRpop[i] += TOTALREACTIVATED;//TCR death
+                            } else{
+                                TCRinactive[i] += TOTALINACTIVATED;
+                                TCRpop[i] -= TOTALINACTIVATED;//TCR death
                             }
-                            TCRinactive[i] += inactiveActiveShift / (cellListSize + 0.f);//shift between active and inactive cells
+                        } else {
+                            TCRinactive[i] += TOTALINACTIVATED;
+                            TCRpop[i] -= TOTALINACTIVATED;//TCR death
                         }
-                    }
-                } else{
-                    if(immunoTracker[i]/Double.valueOf(cellListSize) > 0.000001) {
+
+
+                        TCRpop[i] = (int) Math.round(TCRpop[i]*TCRDeath);
+
+
+                    } else {
+                        TCRpop[i] = (int) Math.round(TCRpop[i]*TCRDeath);//TCR death
                         TCRpop[i] += Math.pow(immunoTracker[i], 1.1);//TCR birth
                     }
+//                    if (PDL1on) {
+////                        TCRinactive[i] = (int) Math.round(TCRinactive[i] * TCRDeathInactive);//death of inactive T cells
+//
+//                        double inactiveActiveShift=0;
+//
+//                        double fuck = TCRinactivationRate*totalPDL1/ (cellListSize + 0.f);
+//                        double reactivate = -reactivateFactor* fuck * (TCRinactive[i]);
+//                        double inactivate = fuck * (TCRpop[i] - 0*TCRinactive[i]);
+////                        if(TCRpop[i] - TCRinactive[i]<0){System.out.println("ha!");}
+//                        //System.out.println(reactivate+" "+inactivate);
+//
+//                        if (TXon) {
+//                            if(immunoTxOn){
+//                                inactiveActiveShift = (Math.abs(reactivate) >= TCRinactive[i] ) ? -TCRinactive[i] : reactivate;
+//                            }
+//                            else{
+//                                inactiveActiveShift = (TCRinactive[i]>TCRpop[i]) ? TCRpop[i] : inactivate;
+//                            }
+//                            TCRinactive[i] += inactiveActiveShift;//shift between active and inactive cells
+//                            TCRinactive[i] = (TCRinactive[i]<0) ? 0 : TCRinactive[i];
+//                        } else {
+//                            inactiveActiveShift = inactivate;
+//                        }
+//
+//                    }
+
+                } else{
+                    TCRpop[i] += Math.pow(immunoTracker[i], 1.1);//TCR birth
                 }
                 totalSize += immunoCurrent[i] + TCRpop[i];
             }
@@ -152,7 +204,7 @@ public class Fantastasize
 
                     double DeathProb = 0.05;
                     for (int j = 0; j < immunoPresence.size(); j++) {
-                        double numerator =  (TCRpop[immunoPresence.get(j)]-TCRinactive[immunoPresence.get(j)]) * immunoCurrent[immunoPresence.get(j)];
+                        double numerator =  (TCRpop[immunoPresence.get(j)]) * immunoCurrent[immunoPresence.get(j)];
                         double denominator = totalSize;
                         DeathProb += 0.35*numerator/denominator;
                     }
@@ -190,7 +242,7 @@ public class Fantastasize
             AliveList=new ArrayList<Cell>();
             System.gc();
 
-//            System.out.println(t + "\t" + Arrays.toString(TCRpop) + "\t" + Arrays.toString(immunoCurrent) + "\t" + cellListSize + "\t" + Arrays.toString(TCRinactive)+ "\t" +totalPDL1);
+            System.out.println(t + "\t" + Arrays.toString(TCRpop) + "\t" + Arrays.toString(immunoCurrent) + "\t" + cellListSize + "\t" + Arrays.toString(TCRinactive)+ "\t" +totalPDL1);
             String dataOut = t + "\t" + Arrays.toString(TCRpop) + "\t" + Arrays.toString(immunoCurrent) + "\t" + cellListSize + "\t" + Arrays.toString(TCRinactive)+ "\t" +totalPDL1 + '\n';
             write(outFileName, dataOut);
 

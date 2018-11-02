@@ -92,7 +92,7 @@ class Cell{
     }
 
     public void phenomute(){
-        if(Fantastasize.generator.nextInt(Fantastasize.neoMutRate)==0){//mutation rate
+        if(Fantastasize.generator.nextInt(Fantastasize.phenoMutRate)==0){//mutation rate
 //            int whichMut = Fantastasize.generator.nextInt(2);
 //            if(whichMut==0){
 //                this.cellCycleLength=Fantastasize.ccmaxmin[0];
