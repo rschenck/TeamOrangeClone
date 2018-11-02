@@ -1,0 +1,10 @@
+python Parse_and_Plot.py Data/CASE1.666ant.50immuno.rep_1.txt
+python Parse_and_Plot.py Data/CASE1.666ant.50immuno.rep_10.txt
+python Parse_and_Plot.py Data/CASE1.666ant.50immuno.rep_2.txt
+python Parse_and_Plot.py Data/CASE1.666ant.50immuno.rep_3.txt
+python Parse_and_Plot.py Data/CASE1.666ant.50immuno.rep_4.txt
+python Parse_and_Plot.py Data/CASE1.666ant.50immuno.rep_5.txt
+python Parse_and_Plot.py Data/CASE1.666ant.50immuno.rep_6.txt
+python Parse_and_Plot.py Data/CASE1.666ant.50immuno.rep_7.txt
+python Parse_and_Plot.py Data/CASE1.666ant.50immuno.rep_8.txt
+python Parse_and_Plot.py Data/CASE1.666ant.50immuno.rep_9.txt
